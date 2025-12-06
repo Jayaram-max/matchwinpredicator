@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cricket Win Probability Predictor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true"></div>
+        <div class="brand-text">
+          <h1>Cricket Win Predictor</h1>
+          <p>Premium live-chase probability engine</p>
+        </div>
+      </div>
+      <button class="mode-toggle" type="button" aria-label="Toggle dark or light mode">
+        <span class="mode-toggle-icon" aria-hidden="true"></span>
+      </button>
+    </header>
+
+    <main class="app-main" aria-label="Cricket win probability calculator">
+      <section class="panel panel-input" aria-labelledby="input-heading">
+        <div class="panel-header">
+          <h2 id="input-heading">Match Situation</h2>
+          <p>Enter current chase details to estimate win probability.</p>
+        </div>
+
+        <form id="predict-form" novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label for="targetRuns">Target Runs</label>
+              <div class="field-sub">Total runs required to win.</div>
+              <input id="targetRuns" name="targetRuns" type="number" min="1" required inputmode="numeric" />
+              <p class="field-error" data-error-for="targetRuns"></p>
+            </div>
+
+            <div class="field">
+              <label for="currentScore">Current Score</label>
+              <div class="field-sub">Runs scored so far.</div>
+              <input id="currentScore" name="currentScore" type="number" min="0" required inputmode="numeric" />
+              <p class="field-error" data-error-for="currentScore"></p>
+            </div>
+
+            <div class="field">
+              <label for="wicketsLost">Wickets Lost</label>
+              <div class="field-sub">Out of 10 wickets.</div>
+              <input id="wicketsLost" name="wicketsLost" type="number" min="0" max="10" required inputmode="numeric" />
+              <p class="field-error" data-error-for="wicketsLost"></p>
+            </div>
+
+            <div class="field">
+              <label for="oversRemaining">Overs Remaining</label>
+              <div class="field-sub">Full overs left (e.g. 7.4 ➝ 7.4).</div>
+              <input id="oversRemaining" name="oversRemaining" type="number" min="0" step="0.1" required inputmode="decimal" />
+              <p class="field-error" data-error-for="oversRemaining"></p>
+            </div>
+
+            <div class="field">
+              <label for="currentRunRate">Current Run Rate</label>
+              <div class="field-sub">Runs per over currently.</div>
+              <input id="currentRunRate" name="currentRunRate" type="number" min="0" step="0.01" required inputmode="decimal" />
+              <p class="field-error" data-error-for="currentRunRate"></p>
+            </div>
+
+            <div class="field">
+              <label for="requiredRunRate">Required Run Rate</label>
+              <div class="field-sub">Runs per over needed to win.</div>
+              <input id="requiredRunRate" name="requiredRunRate" type="number" min="0" step="0.01" required inputmode="decimal" />
+              <p class="field-error" data-error-for="requiredRunRate"></p>
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <button id="predictBtn" type="submit" class="btn-primary">
+              <span class="btn-glow"></span>
+              <span>Predict Win Probability</span>
+            </button>
+            <p class="form-hint">All values approximate live in-play conditions. This is a heuristic model, not an official metric.</p>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel panel-output" aria-live="polite" aria-label="Prediction results">
+        <div class="panel-header">
+          <h2>Win Probability</h2>
+          <p>Heuristic probability based on run rates, wickets and overs left.</p>
+        </div>
+
+        <div class="probability-wrapper">
+          <div class="probability-ring" aria-hidden="true">
+            <svg viewBox="0 0 160 160" class="probability-svg">
+              <defs>
+                <linearGradient id="probStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#38bdf8" />
+                  <stop offset="50%" stop-color="#22c55e" />
+                  <stop offset="100%" stop-color="#eab308" />
+                </linearGradient>
+              </defs>
+              <circle class="ring-bg" cx="80" cy="80" r="64" />
+              <circle class="ring-fg" cx="80" cy="80" r="64" stroke="url(#probStroke)" />
+            </svg>
+            <div class="probability-value">
+              <span id="probabilityPercent">--</span>
+              <span class="probability-label">Win%</span>
+            </div>
+          </div>
+
+          <div class="probability-meta">
+            <p id="predictionSummary" class="prediction-summary">
+              Enter match details and hit Predict to see your chances.
+            </p>
+            <div class="chips-row">
+              <div class="chip" id="chaseStateChip">Chase: -- / --</div>
+              <div class="chip" id="pressureChip">Pressure: --</div>
+              <div class="chip" id="momentumChip">Momentum: --</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="analysis-grid" aria-label="Detailed probability analysis">
+          <article class="analysis-card">
+            <h3>Run Rate Factor</h3>
+            <p id="runRateAnalysis">Awaiting input.</p>
+          </article>
+          <article class="analysis-card">
+            <h3>Wickets Stability</h3>
+            <p id="wicketsAnalysis">Awaiting input.</p>
+          </article>
+          <article class="analysis-card">
+            <h3>Overs Remaining Impact</h3>
+            <p id="oversAnalysis">Awaiting input.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
